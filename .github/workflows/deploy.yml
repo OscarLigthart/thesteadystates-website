@@ -1,0 +1,41 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: './band-site/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./band-site
+        run: npm ci
+
+      - name: Build
+        working-directory: ./band-site
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        working-directory: ./band-site
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          npm run deploy
+        env:
+          GH_TOKEN: ${{ secrets.GHPAT }}
