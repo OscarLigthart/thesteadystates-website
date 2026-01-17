@@ -294,8 +294,18 @@ p{ margin:0 0 12px; color: var(--muted); line-height:1.6; }
   margin: 0;
 }
 
+.mobile-break{
+  display: none;
+}
+
 @media (max-width: 720px){
   .gig{ grid-template-columns: 1fr; }
   .gig__cta{ margin-top: 6px; }
   .member-grid{ grid-template-columns: 1fr; }
+  .title{ 
+    font-size: clamp(40px, 10vw, 60px);
+  }
+  .mobile-break{
+    display: inline;
+  }
 }

@@ -4,7 +4,7 @@ export default function Home() {
       <div className="hero__bg" />
       <div className="hero__overlay" />
       <div className="hero__content">
-        <h1 className="title">The Steady States</h1>
+        <h1 className="title">The Steady<br className="mobile-break" /> States</h1>
       </div>
     </section>
   );
