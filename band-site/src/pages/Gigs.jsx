@@ -26,7 +26,7 @@ export default function Gigs() {
                   Tickets
                 </a>
               ) : (
-                <span className="pill">Details soon</span>
+                <span className="pill">Buy now!</span>
               )}
             </div>
           </article>
