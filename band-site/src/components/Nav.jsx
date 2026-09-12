@@ -1,65 +1,63 @@
 import { useState, useEffect } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+
+const SECTIONS = ["about", "photos-preview", "videos-preview", "gigs"];
 
 export default function Nav() {
   const [activeSection, setActiveSection] = useState("home");
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const onHome = pathname === "/";
 
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = ["home", "about", "gigs"];
-      const scrollPosition = window.scrollY + 100;
+    if (!onHome) return;
 
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
-          }
-        }
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 120;
+      let current = "home";
+      for (const id of SECTIONS) {
+        const el = document.getElementById(id);
+        if (el && scrollPosition >= el.offsetTop) current = id;
       }
+      setActiveSection(current);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [onHome]);
 
-  const scrollToSection = (e, sectionId) => {
+  // Section links live on the home page; from another route, go there first.
+  const goToSection = (e, id) => {
     e.preventDefault();
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+    if (onHome) {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate(`/#${id}`);
     }
   };
+
+  const sectionClass = (id) => (onHome && activeSection === id ? "active" : "");
 
   return (
     <header className="nav">
       <div className="nav__inner">
-        <a href="#home" className="nav__brand" onClick={(e) => scrollToSection(e, "home")}>
+        <Link to="/" className="nav__brand">
           The Steady States
-        </a>
+        </Link>
 
         <nav className="nav__links">
-          <a
-            href="#home"
-            className={activeSection === "home" ? "active" : ""}
-            onClick={(e) => scrollToSection(e, "home")}
-          >
-            Home
-          </a>
-          <a
-            href="#about"
-            className={activeSection === "about" ? "active" : ""}
-            onClick={(e) => scrollToSection(e, "about")}
-          >
+          <a href="/#about" className={sectionClass("about")} onClick={(e) => goToSection(e, "about")}>
             About Us
           </a>
-          <a
-            href="#gigs"
-            className={activeSection === "gigs" ? "active" : ""}
-            onClick={(e) => scrollToSection(e, "gigs")}
-          >
-            Coming Gigs
+          <NavLink to="/photos" className={({ isActive }) => (isActive ? "active" : "")}>
+            Photos
+          </NavLink>
+          <NavLink to="/videos" className={({ isActive }) => (isActive ? "active" : "")}>
+            Videos
+          </NavLink>
+          <a href="/#gigs" className={sectionClass("gigs")} onClick={(e) => goToSection(e, "gigs")}>
+            Gigs
           </a>
         </nav>
       </div>
